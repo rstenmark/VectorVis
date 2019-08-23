@@ -10,4 +10,4 @@ $ pip install pyglet
 ```
 
 # Example
-![](http://imgur.com/a/NHtDYfZ "An example of vector addition")
+![](https://i.imgur.com/NOEllYa.png "An example of vector addition")
