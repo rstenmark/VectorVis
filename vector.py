@@ -1,4 +1,4 @@
-from pyglet import graphics, gl
+from pyglet import graphics, gl, text
 from random import random
 from math import floor
 from copy import deepcopy
@@ -80,26 +80,29 @@ class Plane(object):
         ''' Appends a vector with planespace coordinates to self.vector '''
         self.vectors.append(vector)
 
-    def batch(self, batch=None, show_basis_vectors=True):
+    def batch(self, batch=None, show_basis_vectors=True, show_endpoint_coordinates=True):
         ''' Returns a pyglet.graphics.Batch containing vertex lists for
             all vectors in self.vectors, the basis vectors, and gridlines. '''
         if batch is None:
             batch = graphics.Batch()
 
         if self.gridlines > 1:
+            i_hat = self.basis[0]
+            j_hat = self.basis[1]
             for i in range(0, self.gridlines):
-                y = -1.0 + i * (2/self.gridlines)
-                v0 = self._transform_to_window_coordinates([-1.0, y])
-                v1 = self._transform_to_window_coordinates([1.0, y])
+                j_hat = self.basis[1]
+                y = -j_hat + i * (2/self.gridlines)
+                v0 = self._transform_to_window_coordinates([-j_hat, y])
+                v1 = self._transform_to_window_coordinates([j_hat, y])
                 batch.add(2, gl.GL_LINES, None,
                     ('v2f', [v0[0], v0[1], v1[0], v1[1]]),
                     ('c4B', [64, 64, 64, 1]*2)
                 )
 
             for j in range(0, self.gridlines):
-                x = -1.0 + j * (2/self.gridlines)
-                v0 = self._transform_to_window_coordinates([x, -1.0])
-                v1 = self._transform_to_window_coordinates([x, 1.0])
+                x = -i_hat + j * (2/self.gridlines)
+                v0 = self._transform_to_window_coordinates([x, -i_hat])
+                v1 = self._transform_to_window_coordinates([x, i_hat])
                 batch.add(2, gl.GL_LINES, None,
                     ('v2f', [v0[0], v0[1], v1[0], v1[1]]),
                     ('c4B', [64, 64, 64, 1]*2)
@@ -133,6 +136,15 @@ class Plane(object):
                 ('v2f', [v0[0], v0[1], v1[0], v1[1]]),
                 ('c3f', vector.color*2)
             )
+            if show_endpoint_coordinates is True:
+                # Display planespace coordinates
+                x = round(vector.endpoint[0], 3)
+                y = round(vector.endpoint[1], 3)
+                text.Label(str(x) + ", " + str(y),
+                            font_name='Consolas',
+                            font_size=12,
+                            x=v1[0]+10, y=v1[1]+10).draw()
+
 
         return batch
 
