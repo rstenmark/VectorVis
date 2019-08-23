@@ -90,19 +90,18 @@ class Plane(object):
             i_hat = self.basis[0]
             j_hat = self.basis[1]
             for i in range(0, self.gridlines):
-                j_hat = self.basis[1]
-                y = -j_hat + i * (2/self.gridlines)
-                v0 = self._transform_to_window_coordinates([-j_hat, y])
-                v1 = self._transform_to_window_coordinates([j_hat, y])
+                y = -j_hat + i * (j_hat*2/self.gridlines)
+                v0 = self._transform_to_window_coordinates([-i_hat, y])
+                v1 = self._transform_to_window_coordinates([i_hat, y])
                 batch.add(2, gl.GL_LINES, None,
                     ('v2f', [v0[0], v0[1], v1[0], v1[1]]),
                     ('c4B', [64, 64, 64, 1]*2)
                 )
 
             for j in range(0, self.gridlines):
-                x = -i_hat + j * (2/self.gridlines)
-                v0 = self._transform_to_window_coordinates([x, -i_hat])
-                v1 = self._transform_to_window_coordinates([x, i_hat])
+                x = -i_hat + j * (i_hat*2/self.gridlines)
+                v0 = self._transform_to_window_coordinates([x, -j_hat])
+                v1 = self._transform_to_window_coordinates([x, j_hat])
                 batch.add(2, gl.GL_LINES, None,
                     ('v2f', [v0[0], v0[1], v1[0], v1[1]]),
                     ('c4B', [64, 64, 64, 1]*2)
